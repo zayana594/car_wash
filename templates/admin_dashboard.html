@@ -50,14 +50,16 @@
                     <h5 class="mb-0">Quick Actions</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'admin_manage_services' %}" class="btn btn-outline-primary">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="/admin/washapp/service/" class="btn btn-outline-primary">
                             <i class="fas fa-cog"></i> Manage Services
                         </a>
-                        <a href="{% url 'admin_manage_users' %}" class="btn btn-outline-success">
+
+                        <a href="/admin/auth/user/" class="btn btn-outline-success">
                             <i class="fas fa-users"></i> Manage Users
                         </a>
-                        <a href="{% url 'admin_reports' %}" class="btn btn-outline-info">
+
+                        <a href="/admin/" class="btn btn-outline-info">
                             <i class="fas fa-chart-bar"></i> View Reports
                         </a>
                     </div>
@@ -66,7 +68,7 @@
         </div>
     </div>
 
-    <!-- Recent Bookings Table -->
+    <!-- Recent Bookings -->
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">Recent Bookings</h5>
@@ -99,7 +101,9 @@
                             </td>
                             <td>${{ booking.total_amount }}</td>
                             <td>
-                                <a href="{% url 'admin_booking_detail' booking.id %}" class="btn btn-sm btn-outline-primary">
+                                <!-- ✅ FIXED: open booking in Django Admin -->
+                                <a href="/admin/washapp/booking/{{ booking.id }}/change/"
+                                   class="btn btn-sm btn-outline-primary">
                                     View
                                 </a>
                             </td>
