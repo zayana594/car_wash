@@ -1,0 +1,634 @@
+{% extends 'base.html' %}
+{% block title %}About Us{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.1;
+    }
+    .mission-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .mission-card:hover {
+        transform: translateY(-10px);
+    }
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .team-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    .team-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: -75px auto 20px;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .team-avatar i {
+        font-size: 4rem;
+        color: white;
+    }
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -36px;
+        top: 5px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #667eea;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #667eea;
+    }
+    .value-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+    }
+    .story-icon {
+        font-size: 5rem;
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="about-hero mb-5">
+    <div class="container">
+        <div class="story-icon">
+            <i class="fas fa-car"></i>
+        </div>
+        <h1 class="display-3 fw-bold mb-4">About Dirty to Clean</h1>
+        <p class="lead mb-4">Transforming dirty cars into shining masterpieces since 2015</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <p class="fs-5">We're more than just a car wash service. We're a team of passionate professionals dedicated to bringing sparkle back to your vehicle.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Our Story -->
+<div class="container mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <h2 class="fw-bold mb-4">Our Story</h2>
+            <p class="lead text-muted mb-4">
+                It all started in 2015 when our founder, Alex Johnson, noticed how difficult it was to find reliable, 
+                high-quality car cleaning services. Tired of subpar experiences and inconsistent results, he decided 
+                to create something better.
+            </p>
+            <p>
+                What began as a single van with a dream has grown into a network of professional service providers 
+                across multiple cities. We've served over 50,000 customers and completed more than 100,000 car cleaning 
+                sessions, all while maintaining our commitment to quality and customer satisfaction.
+            </p>
+            <p>
+                Today, Dirty to Clean stands as a testament to what happens when passion meets professionalism. 
+                We continue to innovate, improve, and expand our services while staying true to our core values.
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center p-5">
+                    <div class="story-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <p class="card-text fst-italic fs-5">
+                        "Our mission is simple: deliver exceptional car cleaning services that exceed expectations, 
+                        every single time."
+                    </p>
+                    <p class="text-center mb-0 mt-4">
+                        <strong>Alex Johnson</strong><br>
+                        <small class="text-muted">Founder & CEO</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mission & Vision -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="fw-bold">Our Mission & Vision</h2>
+                <p class="text-muted">Driving towards excellence in every detail</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card mission-card shadow border-primary h-100">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="value-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h3 class="card-title">Our Mission</h3>
+                        </div>
+                        <p class="card-text">
+                            To revolutionize the car cleaning industry by providing convenient, reliable, 
+                            and premium quality services that save our customers time while delivering 
+                            exceptional results. We aim to make professional car care accessible to everyone.
+                        </p>
+                        <ul class="list-unstyled mt-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Deliver 100% customer satisfaction</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Use eco-friendly products and methods</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Employ certified professionals</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Innovate continuously</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card mission-card shadow border-success h-100">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="value-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <h3 class="card-title">Our Vision</h3>
+                        </div>
+                        <p class="card-text">
+                            To become the most trusted and preferred car cleaning service globally, 
+                            recognized for our commitment to quality, innovation, and environmental 
+                            sustainability. We envision a future where everyone has access to 
+                            professional car care at their doorstep.
+                        </p>
+                        <ul class="list-unstyled mt-4">
+                            <li class="mb-2"><i class="fas fa-rocket text-primary me-2"></i>Expand to 50+ cities by 2025</li>
+                            <li class="mb-2"><i class="fas fa-rocket text-primary me-2"></i>Develop AI-powered service optimization</li>
+                            <li class="mb-2"><i class="fas fa-rocket text-primary me-2"></i>Launch electric vehicle specialty services</li>
+                            <li><i class="fas fa-rocket text-primary me-2"></i>Achieve carbon-neutral operations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">By The Numbers</h2>
+            <p class="text-muted">Our journey in numbers</p>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-number">50,000+</div>
+            <h6 class="text-muted">Happy Customers</h6>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-number">100,000+</div>
+            <h6 class="text-muted">Cars Cleaned</h6>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-number">4.8</div>
+            <div class="text-warning mb-2">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <h6 class="text-muted">Average Rating</h6>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-number">200+</div>
+            <h6 class="text-muted">Service Providers</h6>
+        </div>
+    </div>
+</div>
+
+<!-- Our Values -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="fw-bold">Our Core Values</h2>
+                <p class="text-muted">The principles that guide everything we do</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Quality First</h4>
+                        <p class="card-text text-muted">
+                            We never compromise on quality. Every service is performed with precision 
+                            and attention to detail using premium products and equipment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Customer Love</h4>
+                        <p class="card-text text-muted">
+                            Our customers are at the heart of everything we do. We strive to exceed 
+                            expectations and build lasting relationships through exceptional service.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Eco-Friendly</h4>
+                        <p class="card-text text-muted">
+                            We care about our planet. Our services use biodegradable, eco-friendly 
+                            products and water-saving techniques to minimize environmental impact.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Team Excellence</h4>
+                        <p class="card-text text-muted">
+                            Our team members are certified professionals who undergo continuous 
+                            training. We invest in our people to ensure they deliver their best.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-danger bg-opacity-10 text-danger">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Innovation</h4>
+                        <p class="card-text text-muted">
+                            We constantly explore new technologies and methods to improve our 
+                            services and make car cleaning more efficient and effective.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="value-icon bg-purple bg-opacity-10 text-purple">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h4 class="card-title mb-3">Integrity</h4>
+                        <p class="card-text text-muted">
+                            We believe in transparency and honesty. Our pricing is clear, 
+                            our promises are kept, and our word is our bond.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">Our Journey</h2>
+            <p class="text-muted">Milestones along our path to excellence</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h5>2015</h5>
+                    <h4 class="mb-2">The Beginning</h4>
+                    <p class="text-muted">
+                        Dirty to Clean was founded with a single van and a dream to revolutionize 
+                        car cleaning services. Our first customer was a neighbor who needed an 
+                        emergency car wash.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h5>2017</h5>
+                    <h4 class="mb-2">Expansion & Technology</h4>
+                    <p class="text-muted">
+                        Launched our mobile app and website, making booking easier than ever. 
+                        Expanded to three service vans and hired our first five employees.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h5>2019</h5>
+                    <h4 class="mb-2">City Expansion</h4>
+                    <p class="text-muted">
+                        Expanded services to three major cities. Reached 10,000 customers milestone 
+                        and introduced eco-friendly cleaning products across all services.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h5>2021</h5>
+                    <h4 class="mb-2">Innovation Award</h4>
+                    <p class="text-muted">
+                        Received the "Innovation in Service Industry" award. Launched our 
+                        subscription model and introduced AI-powered scheduling optimization.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h5>2023</h5>
+                    <h4 class="mb-2">National Recognition</h4>
+                    <p class="text-muted">
+                        Featured in major business publications. Expanded to 10 cities nationwide 
+                        and crossed 50,000 customers served.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h5>2024</h5>
+                    <h4 class="mb-2">The Future</h4>
+                    <p class="text-muted">
+                        Currently working on electric vehicle specialty services and planning 
+                        international expansion. Our journey continues with the same passion 
+                        and commitment to excellence.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team Section -->
+<div class="bg-light py-5 mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="fw-bold">Meet Our Leadership</h2>
+                <p class="text-muted">The driving force behind our success</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card team-card border-0 h-100 pt-5">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-1">Alex Johnson</h4>
+                        <p class="text-muted mb-3">Founder & CEO</p>
+                        <p class="card-text">
+                            With 15+ years in the automotive industry, Alex founded Dirty to Clean 
+                            to solve the pain points he experienced as a car owner.
+                        </p>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-info">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card team-card border-0 h-100 pt-5">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-1">Sarah Miller</h4>
+                        <p class="text-muted mb-3">Operations Director</p>
+                        <p class="card-text">
+                            Sarah ensures every service meets our high standards. Her background 
+                            in quality management keeps our operations running smoothly.
+                        </p>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-info">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card team-card border-0 h-100 pt-5">
+                    <div class="team-avatar">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h4 class="card-title mb-1">Michael Chen</h4>
+                        <p class="text-muted mb-3">Technology Lead</p>
+                        <p class="card-text">
+                            Michael leads our tech innovation, from app development to AI-powered 
+                            scheduling systems that make our services efficient.
+                        </p>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-info">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-gradient-primary text-white border-0 shadow-lg">
+                <div class="card-body p-5 text-center">
+                    <h2 class="mb-4">Ready to Experience the Dirty to Clean Difference?</h2>
+                    <p class="mb-4">
+                        Join thousands of satisfied customers who trust us with their vehicles. 
+                        Experience professional car cleaning like never before.
+                    </p>
+                    <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                        <a href="{% url 'book_service' %}" class="btn btn-light btn-lg px-5">
+                            <i class="fas fa-calendar-plus me-2"></i>Book Now
+                        </a>
+                        <a href="{% url 'services_list' %}" class="btn btn-outline-light btn-lg px-5">
+                            <i class="fas fa-eye me-2"></i>View Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">What Our Customers Say</h2>
+            <p class="text-muted">Don't just take our word for it</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-warning mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="card-text fst-italic">
+                        "Dirty to Clean transformed my car from a mess to showroom condition. 
+                        The attention to detail is incredible!"
+                    </p>
+                    <div class="d-flex align-items-center mt-4">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 50px; height: 50px;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Robert Davis</h6>
+                            <small class="text-muted">Premium Member</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-warning mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="card-text fst-italic">
+                        "As a busy professional, the convenience of mobile service is a game-changer. 
+                        Quality is consistently excellent."
+                    </p>
+                    <div class="d-flex align-items-center mt-4">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 50px; height: 50px;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Jennifer Lee</h6>
+                            <small class="text-muted">Regular Customer</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-warning mb-3">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="card-text fst-italic">
+                        "Their eco-friendly approach convinced me to switch. Professional service 
+                        that's good for my car and the planet!"
+                    </p>
+                    <div class="d-flex align-items-center mt-4">
+                        <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 50px; height: 50px;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">David Wilson</h6>
+                            <small class="text-muted">Business Owner</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

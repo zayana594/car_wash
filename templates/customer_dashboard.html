@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1">Welcome back, {{ user.first_name|default:user.username }}!</h2>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    {% now "F j, Y" %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'book_service' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-2"></i>New Booking
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-primary text-white card-hover">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">Total Bookings</h6>
+                        <h2 class="mb-0">{{ total_bookings|default:"0" }}</h2>
+                    </div>
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                    </div>
+                </div>
+                <p class="mb-0 mt-3">
+                    <small><i class="fas fa-arrow-up me-1"></i>5% from last month</small>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-success text-white card-hover">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">Upcoming</h6>
+                        <h2 class="mb-0">{{ upcoming_bookings|default:"0" }}</h2>
+                    </div>
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+                <p class="mb-0 mt-3">
+                    <small>Next booking in 3 days</small>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-info text-white card-hover">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">Completed</h6>
+                        <h2 class="mb-0">{{ completed_bookings|default:"0" }}</h2>
+                    </div>
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+                <p class="mb-0 mt-3">
+                    <small><i class="fas fa-star me-1"></i>4.8 avg rating</small>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white card-hover">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-white-50 mb-2">Total Spent</h6>
+                        <h2 class="mb-0">${{ total_spent|default:"0.00" }}</h2>
+                    </div>
+                    <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                        <i class="fas fa-dollar-sign fa-2x"></i>
+                    </div>
+                </div>
+                <p class="mb-0 mt-3">
+                    <small>Lifetime value</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Next Booking & Quick Actions -->
+<div class="row mb-4">
+    {% if next_booking %}
+    <div class="col-lg-8 mb-4">
+        <div class="card border-primary card-hover">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-calendar-star me-2"></i>Your Next Booking</h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4 class="text-primary">{{ next_booking.service.name }}</h4>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <p class="mb-1">
+                                    <i class="fas fa-calendar text-muted me-2"></i>
+                                    <strong>Date:</strong> {{ next_booking.booking_date|date:"M d, Y" }}
+                                </p>
+                                <p class="mb-1">
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <strong>Time:</strong> {{ next_booking.booking_time }}
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1">
+                                    <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                    <strong>Location:</strong> {{ next_booking.location|default:"Your Location" }}
+                                </p>
+                                <p class="mb-0">
+                                    <i class="fas fa-car text-muted me-2"></i>
+                                    <strong>Vehicle:</strong> {{ next_booking.vehicle_type|default:"Not specified" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <div class="mb-3">
+                            <span class="badge bg-{{ next_booking.status_color }} p-3 fs-6">
+                                <i class="fas fa-{{ next_booking.status_icon }} me-1"></i>
+                                {{ next_booking.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                            {% if next_booking.can_cancel %}
+                            <a href="#" class="btn btn-outline-danger" 
+                               onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                Cancel
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="col-lg-{% if next_booking %}4{% else %}12{% endif %} mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <a href="{% url 'book_service' %}" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                            <span>New Booking</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'my_bookings' %}" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-list fa-2x mb-2"></i>
+                            <span>All Bookings</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-user-edit fa-2x mb-2"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3">
+                            <i class="fas fa-question-circle fa-2x mb-2"></i>
+                            <span>Help Center</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Bookings -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Bookings</h5>
+        <a href="{% url 'my_bookings' %}" class="btn btn-sm btn-outline-primary">
+            View All <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Provider</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings|slice:":5" %}
+                    <tr>
+                        <td>
+                            <strong class="text-primary">#{{ booking.id }}</strong>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>{{ booking.service.name }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.service.duration }} mins</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{ booking.booking_date|date:"M d, Y" }}
+                                <br>
+                                <small class="text-muted">{{ booking.booking_time }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if booking.provider %}
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center me-2" 
+                                     style="width: 30px; height: 30px;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <span>{{ booking.provider.get_full_name }}</span>
+                            </div>
+                            {% else %}
+                            <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ booking.status_color }} p-2">
+                                <i class="fas fa-{{ booking.status_icon }} me-1"></i>
+                                {{ booking.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>${{ booking.total_amount }}</strong>
+                            <br>
+                            <small class="text-muted">{{ booking.payment_status|title }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="#" class="btn btn-outline-primary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if booking.can_rebook %}
+                                <a href="#" class="btn btn-outline-success" title="Book Again">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                <h4>No bookings yet</h4>
+                                <p>Start by booking your first service!</p>
+                                <a href="{% url 'book_service' %}" class="btn btn-primary mt-2">
+                                    <i class="fas fa-plus-circle me-2"></i>Book Your First Service
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-bell me-2"></i>Recent Activity</h5>
+    </div>
+    <div class="card-body">
+        <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex align-items-center">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" 
+                     style="width: 40px; height: 40px;">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">Booking Completed</h6>
+                    <p class="mb-0 text-muted">Your Premium Wash booking was completed successfully</p>
+                </div>
+                <small class="text-muted">2 hours ago</small>
+            </div>
+            <div class="list-group-item d-flex align-items-center">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                     style="width: 40px; height: 40px;">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">New Booking Scheduled</h6>
+                    <p class="mb-0 text-muted">You scheduled a new Interior Detailing service</p>
+                </div>
+                <small class="text-muted">Yesterday</small>
+            </div>
+            <div class="list-group-item d-flex align-items-center">
+                <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center me-3" 
+                     style="width: 40px; height: 40px;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">Profile Updated</h6>
+                    <p class="mb-0 text-muted">You updated your contact information</p>
+                </div>
+                <small class="text-muted">3 days ago</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

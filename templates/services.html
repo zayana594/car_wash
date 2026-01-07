@@ -1,0 +1,175 @@
+<!-- services.html -->
+{% extends 'base.html' %}
+{% block title %}Our Services{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="hero bg-primary text-white rounded p-5 mb-4">
+            <h1 class="display-4">Our Services</h1>
+            <p class="lead">Choose from our wide range of professional car cleaning services</p>
+        </div>
+    </div>
+</div>
+
+<!-- Service Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="serviceSearch" placeholder="Search services...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="priceFilter" id="priceLow" value="low">
+                    <label class="form-check-label" for="priceLow">Low to High</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="priceFilter" id="priceHigh" value="high">
+                    <label class="form-check-label" for="priceHigh">High to Low</label>
+                </div>
+                <select class="form-select d-inline-block w-auto" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="exterior">Exterior</option>
+                    <option value="interior">Interior</option>
+                    <option value="premium">Premium</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Grid -->
+<div class="row" id="servicesGrid">
+    {% for service in services %}
+    <div class="col-lg-4 col-md-6 mb-4 service-card" 
+         data-category="{{ service.category }}"
+         data-price="{{ service.price }}">
+        <div class="card h-100 shadow-sm">
+            {% if service.image %}
+            <img src="{{ service.image.url }}" 
+                 class="card-img-top service-image" 
+                 alt="{{ service.name }}"
+                 style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center"
+                 style="height: 200px;">
+                <i class="fas fa-car fa-4x text-white"></i>
+            </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">{{ service.name }}</h5>
+                    <span class="badge bg-{{ service.category_color }}">
+                        {{ service.get_category_display }}
+                    </span>
+                </div>
+                
+                <p class="card-text text-muted mb-3">{{ service.description }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <i class="fas fa-clock text-primary"></i>
+                        <small class="ms-1">{{ service.duration }} mins</small>
+                    </div>
+                    <div>
+                        <i class="fas fa-star text-warning"></i>
+                        <small class="ms-1">{{ service.rating|default:"4.5" }}</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary mb-0">${{ service.price }}</h4>
+                    <a href="{% url 'book_service' %}" class="btn btn-primary">
+
+                        <i class="fas fa-calendar-plus"></i> Book Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Service Features -->
+            <div class="card-footer bg-transparent">
+                <div class="row g-2">
+                    {% for feature in service.features.all|slice:":3" %}
+                    <div class="col-6">
+                        <small><i class="fas fa-check text-success me-1"></i>{{ feature.name }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <i class="fas fa-car fa-4x text-muted mb-3"></i>
+        <h3>No services available</h3>
+        <p class="text-muted">Check back later for our services</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Service Comparison Modal -->
+<div class="modal fade" id="compareModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Compare Services</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="compareContent">
+                <!-- Comparison table will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Search functionality
+    $('#serviceSearch').on('keyup', function() {
+        var searchText = $(this).val().toLowerCase();
+        $('.service-card').each(function() {
+            var serviceName = $(this).find('.card-title').text().toLowerCase();
+            var serviceDesc = $(this).find('.card-text').text().toLowerCase();
+            if (serviceName.indexOf(searchText) > -1 || serviceDesc.indexOf(searchText) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+
+    // Category filter
+    $('#categoryFilter').change(function() {
+        var category = $(this).val();
+        if (category) {
+            $('.service-card').hide();
+            $('.service-card[data-category="' + category + '"]').show();
+        } else {
+            $('.service-card').show();
+        }
+    });
+
+    // Price filter
+    $('input[name="priceFilter"]').change(function() {
+        var services = $('.service-card').get();
+        if ($(this).val() === 'low') {
+            services.sort(function(a, b) {
+                return parseFloat($(a).data('price')) - parseFloat($(b).data('price'));
+            });
+        } else {
+            services.sort(function(a, b) {
+                return parseFloat($(b).data('price')) - parseFloat($(a).data('price'));
+            });
+        }
+        $('#servicesGrid').empty().append(services);
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

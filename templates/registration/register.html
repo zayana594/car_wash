@@ -1,0 +1,308 @@
+<!-- templates/registration/register.html -->
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-hover shadow">
+            <div class="card-header bg-primary text-white py-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-wrapper me-3">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">Create Your Account</h4>
+                        <p class="mb-0 opacity-75">Join thousands of satisfied customers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Fill in your details to create your account. All fields are required.
+                </div>
+                
+                <form method="post" id="registerForm" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label">
+                                <i class="fas fa-user me-1"></i>First Name *
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="text-danger">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label">
+                                <i class="fas fa-user me-1"></i>Last Name *
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="text-danger">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Email Address *
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">We'll never share your email with anyone else</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">
+                            <i class="fas fa-user-circle me-1"></i>Username *
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">This will be your public display name</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_user_type" class="form-label">
+                            <i class="fas fa-user-tag me-1"></i>Account Type *
+                        </label>
+                        {{ form.user_type }}
+                        {% if form.user_type.errors %}
+                            <div class="text-danger">{{ form.user_type.errors }}</div>
+                        {% endif %}
+                        <div class="form-text">Choose your account type (Customer, Service Provider, or Admin)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">
+                            <i class="fas fa-phone me-1"></i>Phone Number
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="text-danger">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password1" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password *
+                            </label>
+                            <div class="input-group">
+                                {{ form.password1 }}
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        id="togglePassword1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger">{{ form.password1.errors }}</div>
+                            {% endif %}
+                            <!-- Password Strength Meter -->
+                            <div class="mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" id="passwordStrengthBar" 
+                                         role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="passwordStrengthText" class="form-text"></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password2" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Confirm Password *
+                            </label>
+                            <div class="input-group">
+                                {{ form.password2 }}
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        id="togglePassword2">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="text-danger">{{ form.password2.errors }}</div>
+                            {% endif %}
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> 
+                            and <a href="#">Privacy Policy</a>
+                        </label>
+                        <div class="invalid-feedback">You must agree to the terms before submitting.</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-3 mb-3" id="submitBtn">
+                        <span class="spinner-border spinner-border-sm d-none me-2" id="loadingSpinner"></span>
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                    
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-2">Or sign up with</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm px-4">
+                                <i class="fab fa-google me-2"></i>Google
+                            </button>
+                            <button type="button" class="btn btn-outline-dark btn-sm px-4">
+                                <i class="fab fa-facebook-f me-2"></i>Facebook
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <hr>
+                <p class="text-center mb-0">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Welcome to Dirty to Clean!</h6>
+                <p>By creating an account, you agree to:</p>
+                <ul>
+                    <li>Provide accurate and complete information</li>
+                    <li>Keep your password secure</li>
+                    <li>Accept responsibility for all activities under your account</li>
+                    <li>Not use the service for any illegal purposes</li>
+                    <li>Respect our service providers and staff</li>
+                </ul>
+                <p>We reserve the right to suspend or terminate accounts that violate these terms.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const password1 = document.getElementById('id_password1');
+    const password2 = document.getElementById('id_password2');
+    const strengthBar = document.getElementById('passwordStrengthBar');
+    const strengthText = document.getElementById('passwordStrengthText');
+    const passwordMatch = document.getElementById('passwordMatch');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const toggleButtons = {
+        password1: document.getElementById('togglePassword1'),
+        password2: document.getElementById('togglePassword2')
+    };
+
+    // Toggle password visibility
+    if (toggleButtons.password1 && password1) {
+        toggleButtons.password1.addEventListener('click', function() {
+            const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+            password1.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    }
+
+    if (toggleButtons.password2 && password2) {
+        toggleButtons.password2.addEventListener('click', function() {
+            const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+            password2.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    }
+
+    // Password strength checker
+    if (password1) {
+        password1.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 10;
+            
+            // Complexity checks
+            if (/[a-z]/.test(password)) strength += 15;
+            if (/[A-Z]/.test(password)) strength += 15;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+            
+            // Update strength bar
+            if (strengthBar) {
+                strengthBar.style.width = Math.min(strength, 100) + '%';
+                
+                // Update text and colors
+                if (strength < 40) {
+                    strengthBar.className = 'progress-bar bg-danger';
+                    if (strengthText) strengthText.textContent = 'Weak password';
+                    if (strengthText) strengthText.className = 'form-text text-danger';
+                } else if (strength < 70) {
+                    strengthBar.className = 'progress-bar bg-warning';
+                    if (strengthText) strengthText.textContent = 'Medium password';
+                    if (strengthText) strengthText.className = 'form-text text-warning';
+                } else {
+                    strengthBar.className = 'progress-bar bg-success';
+                    if (strengthText) strengthText.textContent = 'Strong password';
+                    if (strengthText) strengthText.className = 'form-text text-success';
+                }
+            }
+            
+            checkPasswordMatch();
+        });
+    }
+
+    // Password match checker
+    function checkPasswordMatch() {
+        if (password2 && password2.value) {
+            if (password1.value === password2.value) {
+                if (passwordMatch) {
+                    passwordMatch.textContent = 'Passwords match';
+                    passwordMatch.className = 'form-text text-success';
+                }
+            } else {
+                if (passwordMatch) {
+                    passwordMatch.textContent = 'Passwords do not match';
+                    passwordMatch.className = 'form-text text-danger';
+                }
+            }
+        }
+    }
+
+    if (password2) {
+        password2.addEventListener('input', checkPasswordMatch);
+    }
+
+    // Form submission
+    if (form) {
+        form.addEventListener('submit', function() {
+            if (loadingSpinner) loadingSpinner.classList.remove('d-none');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

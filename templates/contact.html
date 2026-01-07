@@ -1,0 +1,482 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact Us{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{% static "images/contact-bg.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+    }
+    .contact-info-card {
+        border: none;
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .contact-info-card:hover {
+        transform: translateY(-5px);
+    }
+    .contact-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+    }
+    .contact-form .form-control {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s;
+    }
+    .contact-form .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    .map-container {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .social-contact a {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 5px;
+        transition: all 0.3s;
+    }
+    .social-contact a:hover {
+        transform: translateY(-3px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="contact-hero mb-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Get In Touch</h1>
+        <p class="lead mb-4">We're here to help you with all your car cleaning needs. Reach out to us anytime!</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-light alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Quick Response:</strong> We typically respond within 2-4 hours during business days.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Contact Information Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card contact-info-card border-primary">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-phone fa-2x"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Phone Support</h4>
+                    <p class="card-text text-muted mb-3">Call us for immediate assistance with bookings or inquiries.</p>
+                    <h5 class="text-primary mb-2">+1 (234) 567-8900</h5>
+                    <small class="text-muted">Mon-Sun: 7:00 AM - 9:00 PM</small>
+                    <div class="mt-3">
+                        <a href="tel:+12345678900" class="btn btn-outline-primary">
+                            <i class="fas fa-phone me-2"></i>Call Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card contact-info-card border-success">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Email Support</h4>
+                    <p class="card-text text-muted mb-3">Send us an email for detailed inquiries or feedback.</p>
+                    <h5 class="text-success mb-2">info@dirtytoclean.com</h5>
+                    <small class="text-muted">Response time: 2-4 hours</small>
+                    <div class="mt-3">
+                        <a href="mailto:info@dirtytoclean.com" class="btn btn-outline-success">
+                            <i class="fas fa-envelope me-2"></i>Email Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card contact-info-card border-warning">
+                <div class="card-body text-center p-4">
+                    <div class="contact-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                    </div>
+                    <h4 class="card-title mb-3">Visit Our Office</h4>
+                    <p class="card-text text-muted mb-3">Visit our headquarters for in-person assistance.</p>
+                    <h5 class="text-warning mb-2">123 Car Street</h5>
+                    <small class="text-muted">Auto City, AC 12345</small>
+                    <div class="mt-3">
+                        <a href="#map" class="btn btn-outline-warning">
+                            <i class="fas fa-directions me-2"></i>Get Directions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form & Map -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" class="contact-form" id="contactForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" required 
+                                       placeholder="Enter your full name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" name="email" required 
+                                       placeholder="your.email@example.com">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="+1 (234) 567-8900">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <select class="form-select" id="subject" name="subject" required>
+                                <option value="" selected disabled>Select a subject</option>
+                                <option value="booking">Booking Inquiry</option>
+                                <option value="service">Service Information</option>
+                                <option value="billing">Billing/Payment</option>
+                                <option value="complaint">Complaint</option>
+                                <option value="feedback">Feedback/Suggestion</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required 
+                                      placeholder="Please describe your inquiry in detail..."></textarea>
+                            <div class="form-text">Maximum 500 characters</div>
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                Subscribe to our newsletter for updates and special offers
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 py-3">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                        
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">By submitting this form, you agree to our 
+                                <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Find Us</h4>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Map Container -->
+                    <div class="map-container" id="map">
+                        <div class="ratio ratio-16x9">
+                            <!-- Embed Google Map -->
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a316e0b9a3b%3A0x7c1c35bcb2c6c3b!2s123%20Car%20Street%2C%20New%20York%2C%20NY%2010001!5e0!3m2!1sen!2sus!4v1640123456789!5m2!1sen!2sus" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Details -->
+                    <div class="p-4">
+                        <h5 class="mb-3">Office Location</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <p class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                    <strong>Address:</strong><br>
+                                    123 Car Street,<br>
+                                    Auto City, AC 12345
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <p class="mb-2">
+                                    <i class="fas fa-clock text-success me-2"></i>
+                                    <strong>Business Hours:</strong><br>
+                                    Monday - Friday: 8:00 AM - 8:00 PM<br>
+                                    Saturday - Sunday: 9:00 AM - 6:00 PM
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="https://maps.google.com/?q=123+Car+Street+Auto+City+AC+12345" 
+                               target="_blank" 
+                               class="btn btn-outline-success">
+                                <i class="fas fa-directions me-2"></i>Open in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-question-circle me-2"></i>Frequently Asked Questions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    What are your response times?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We aim to respond to all inquiries within 2-4 hours during business days. For urgent matters, please call our support line.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    Can I cancel or reschedule my booking?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, you can cancel or reschedule your booking up to 2 hours before the scheduled time through your dashboard or by contacting our support team.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    Do you offer emergency services?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, we offer emergency car cleaning services. Please call our emergency hotline at +1 (234) 567-8910 for immediate assistance.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    How can I become a service provider?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Visit our "Become a Provider" page or contact our partnership team at partners@dirtytoclean.com for more information about joining our network of service providers.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Media & Additional Contact -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-4">Connect With Us</h3>
+                    <p class="text-muted mb-4">Follow us on social media for updates, tips, and special offers.</p>
+                    
+                    <div class="social-contact mb-4">
+                        <a href="#" class="bg-primary text-white" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="bg-info text-white" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="bg-danger text-white" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="bg-success text-white" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="#" class="bg-dark text-white" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="alert alert-light">
+                                <h5 class="mb-2">Need Immediate Assistance?</h5>
+                                <p class="mb-2">
+                                    <i class="fas fa-headset text-primary me-2"></i>
+                                    Call our 24/7 Emergency Support: <strong>+1 (234) 567-8910</strong>
+                                </p>
+                                <small class="text-muted">Available for urgent car cleaning emergencies</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <p class="text-muted">
+                            <i class="fas fa-envelope-open-text me-2"></i>
+                            For partnership inquiries: <a href="mailto:partners@dirtytoclean.com" class="text-decoration-none">partners@dirtytoclean.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Message Sent Successfully!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center py-3">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4>Thank You!</h4>
+                    <p>Your message has been received. We'll get back to you within 2-4 hours.</p>
+                    <p class="text-muted">Reference ID: <span id="referenceId"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contactForm');
+    const messageTextarea = document.getElementById('message');
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    
+    // Character counter for message
+    if (messageTextarea) {
+        messageTextarea.addEventListener('input', function() {
+            const maxLength = 500;
+            const currentLength = this.value.length;
+            const counter = this.parentElement.querySelector('.form-text');
+            
+            if (counter) {
+                counter.textContent = `${currentLength}/${maxLength} characters`;
+                
+                if (currentLength > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                    counter.textContent = `Maximum ${maxLength} characters reached`;
+                    counter.classList.add('text-danger');
+                } else {
+                    counter.classList.remove('text-danger');
+                }
+            }
+        });
+        
+        // Initialize counter
+        messageTextarea.dispatchEvent(new Event('input'));
+    }
+    
+    // Form submission
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Generate reference ID
+            const referenceId = 'DC-' + Date.now().toString().slice(-8);
+            document.getElementById('referenceId').textContent = referenceId;
+            
+            // Show success modal
+            successModal.show();
+            
+            // Reset form
+            contactForm.reset();
+            
+            // Reset character counter
+            if (messageTextarea) {
+                messageTextarea.dispatchEvent(new Event('input'));
+            }
+            
+            // In a real application, you would send the form data to the server here
+            console.log('Form submitted with reference:', referenceId);
+        });
+    }
+    
+    // Smooth scroll to map
+    const mapLinks = document.querySelectorAll('a[href="#map"]');
+    mapLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                mapElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+    
+    // Auto-focus on name field
+    document.getElementById('name')?.focus();
+});
+</script>
+{% endblock %}

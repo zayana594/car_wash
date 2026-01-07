@@ -1,0 +1,741 @@
+<!-- templates/my_bookings.html -->
+{% extends 'base.html' %}
+{% load booking_filters %}
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">My Bookings</h1>
+            <a href="{% url 'book_service' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle me-2"></i>New Booking
+            </a>
+        </div>
+        <p class="text-muted mb-0">Manage and view all your car wash bookings</p>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-4">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if bookings %}
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title">Total Bookings</h6>
+                <h3 class="mb-0">{{ bookings.count }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-title">Upcoming</h6>
+                <h3 class="mb-0">{{ bookings|filter_by_status:"pending,confirmed"|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title">Completed</h6>
+                <h3 class="mb-0">{{ bookings|filter_by_status:"completed"|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h6 class="card-title">Cancelled</h6>
+                <h3 class="mb-0">{{ bookings|filter_by_status:"cancelled"|length }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Tabs -->
+<ul class="nav nav-tabs mb-4" id="bookingTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all">
+            All Bookings ({{ bookings.count }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming">
+            Upcoming ({{ bookings|filter_by_status:"pending,confirmed"|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed">
+            Completed ({{ bookings|filter_by_status:"completed"|length }})
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled">
+            Cancelled ({{ bookings|filter_by_status:"cancelled"|length }})
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="bookingTabsContent">
+    <!-- All Bookings Tab -->
+    <div class="tab-pane fade show active" id="all">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Provider</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td><strong class="text-primary">#{{ booking.id }}</strong></td>
+                        <td>
+                            <div>
+                                <strong>{{ booking.service.name|default:"Basic Wash" }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.service.duration|default:"30" }} mins</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{ booking.booking_date|date:"M d, Y" }}
+                                <br>
+                                <small class="text-muted">{{ booking.booking_time|default:"Not specified" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if booking.service_provider %}
+                                {{ booking.service_provider.company_name|default:"Provider" }}
+                            {% else %}
+                                <span class="badge bg-warning">Pending Assignment</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ booking.status_color }} p-2">
+                                <i class="fas fa-{{ booking.status_icon }} me-1"></i>
+                                {{ booking.get_status_display|default:"Pending" }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>${{ booking.total_amount|default:"0.00" }}</strong>
+                            <br>
+                            <small class="text-muted">{{ booking.payment_status|default:"Pending"|title }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary view-details" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                                <button class="btn btn-outline-danger cancel-booking" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                                {% if booking.status == 'completed' and not booking.review %}
+                                <button class="btn btn-outline-success add-review" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Upcoming Bookings Tab -->
+    <div class="tab-pane fade" id="upcoming">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Provider</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                    <tr>
+                        <td><strong class="text-primary">#{{ booking.id }}</strong></td>
+                        <td>
+                            <div>
+                                <strong>{{ booking.service.name|default:"Basic Wash" }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.service.duration|default:"30" }} mins</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{ booking.booking_date|date:"M d, Y" }}
+                                <br>
+                                <small class="text-muted">{{ booking.booking_time|default:"Not specified" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if booking.service_provider %}
+                                {{ booking.service_provider.company_name|default:"Provider" }}
+                            {% else %}
+                                <span class="badge bg-warning">Pending Assignment</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ booking.status_color }} p-2">
+                                <i class="fas fa-{{ booking.status_icon }} me-1"></i>
+                                {{ booking.get_status_display|default:"Pending" }}
+                            </span>
+                        </td>
+                        <td>
+                            <strong>${{ booking.total_amount|default:"0.00" }}</strong>
+                            <br>
+                            <small class="text-muted">{{ booking.payment_status|default:"Pending"|title }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary view-details" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-danger cancel-booking" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                <h4>No upcoming bookings</h4>
+                                <p>Book your next car wash service now!</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Completed Bookings Tab -->
+    <div class="tab-pane fade" id="completed">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Provider</th>
+                        <th>Rating</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    {% if booking.status == 'completed' %}
+                    <tr>
+                        <td><strong class="text-primary">#{{ booking.id }}</strong></td>
+                        <td>
+                            <div>
+                                <strong>{{ booking.service.name|default:"Basic Wash" }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.service.duration|default:"30" }} mins</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{ booking.booking_date|date:"M d, Y" }}
+                                <br>
+                                <small class="text-muted">{{ booking.booking_time|default:"Not specified" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if booking.service_provider %}
+                                {{ booking.service_provider.company_name|default:"Provider" }}
+                            {% else %}
+                                <span class="text-muted">Not specified</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.review %}
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= booking.review.rating %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span class="badge bg-secondary">No review</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>${{ booking.total_amount|default:"0.00" }}</strong>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary view-details" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if not booking.review %}
+                                <button class="btn btn-outline-success add-review" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-star"></i> Review
+                                </button>
+                                {% endif %}
+                                <button class="btn btn-outline-info rebook" 
+                                        data-service-id="{{ booking.service.id }}">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-check-circle fa-3x mb-3"></i>
+                                <h4>No completed bookings</h4>
+                                <p>Your completed bookings will appear here</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Cancelled Bookings Tab -->
+    <div class="tab-pane fade" id="cancelled">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Service</th>
+                        <th>Date & Time</th>
+                        <th>Provider</th>
+                        <th>Cancelled On</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    {% if booking.status == 'cancelled' %}
+                    <tr>
+                        <td><strong class="text-primary">#{{ booking.id }}</strong></td>
+                        <td>
+                            <div>
+                                <strong>{{ booking.service.name|default:"Basic Wash" }}</strong>
+                                <br>
+                                <small class="text-muted">{{ booking.service.duration|default:"30" }} mins</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {{ booking.booking_date|date:"M d, Y" }}
+                                <br>
+                                <small class="text-muted">{{ booking.booking_time|default:"Not specified" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if booking.service_provider %}
+                                {{ booking.service_provider.company_name|default:"Provider" }}
+                            {% else %}
+                                <span class="text-muted">Not assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ booking.updated_at|date:"M d, Y" }}
+                            <br>
+                            <small class="text-muted">{{ booking.updated_at|date:"h:i A" }}</small>
+                        </td>
+                        <td>
+                            <strong>${{ booking.total_amount|default:"0.00" }}</strong>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary view-details" 
+                                        data-booking-id="{{ booking.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-info rebook" 
+                                        data-service-id="{{ booking.service.id }}">
+                                    <i class="fas fa-redo"></i> Rebook
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-ban fa-3x mb-3"></i>
+                                <h4>No cancelled bookings</h4>
+                                <p>That's great! No cancellations yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- No Bookings State -->
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
+        <h3 class="mb-3">No Bookings Yet</h3>
+        <p class="text-muted mb-4">You haven't made any bookings yet. Book your first car wash service and experience professional cleaning!</p>
+        <a href="{% url 'book_service' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Book Your First Service
+        </a>
+        <div class="mt-4">
+            <a href="{% url 'services_list' %}" class="text-decoration-none">
+                <i class="fas fa-eye me-1"></i> View Our Services
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Booking Details Modal -->
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="bookingDetailsContent">
+                <!-- Content will be loaded via JavaScript -->
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="printBooking">Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Modal -->
+<div class="modal fade" id="cancelBookingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Cancel Booking</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking?</p>
+                <p class="text-danger"><strong>Note:</strong> Cancellation may be subject to fees depending on timing.</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmCancellation">
+                    <label class="form-check-label" for="confirmCancellation">
+                        I understand and want to cancel this booking
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Booking</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelBtn" disabled>Cancel Booking</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Add Review</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-stars mb-2">
+                            {% for i in "12345" %}
+                            <i class="far fa-star fa-2x star-rating" data-value="{{ forloop.counter }}"></i>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="rating" id="selectedRating" value="5">
+                    </div>
+                    <div class="mb-3">
+                        <label for="reviewComment" class="form-label">Comments</label>
+                        <textarea class="form-control" id="reviewComment" name="comment" rows="3" 
+                                  placeholder="Share your experience..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="submitReviewBtn">Submit Review</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab activation
+    const tabLinks = document.querySelectorAll('#bookingTabs button');
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            tabLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // View booking details
+    const viewButtons = document.querySelectorAll('.view-details');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const bookingId = this.dataset.bookingId;
+            showBookingDetails(bookingId);
+        });
+    });
+    
+    // Cancel booking
+    const cancelButtons = document.querySelectorAll('.cancel-booking');
+    let currentBookingId = null;
+    
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentBookingId = this.dataset.bookingId;
+            const modal = new bootstrap.Modal(document.getElementById('cancelBookingModal'));
+            modal.show();
+        });
+    });
+    
+    // Confirm cancellation checkbox
+    const confirmCheckbox = document.getElementById('confirmCancellation');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    
+    if (confirmCheckbox && confirmCancelBtn) {
+        confirmCheckbox.addEventListener('change', function() {
+            confirmCancelBtn.disabled = !this.checked;
+        });
+        
+        confirmCancelBtn.addEventListener('click', function() {
+            if (currentBookingId) {
+                cancelBooking(currentBookingId);
+            }
+        });
+    }
+    
+    // Add review
+    const reviewButtons = document.querySelectorAll('.add-review');
+    const stars = document.querySelectorAll('.star-rating');
+    
+    reviewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentBookingId = this.dataset.bookingId;
+            const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
+        });
+    });
+    
+    // Star rating selection
+    if (stars) {
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.dataset.value);
+                document.getElementById('selectedRating').value = value;
+                
+                // Update star display
+                stars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= value) {
+                        s.classList.remove('far');
+                        s.classList.add('fas', 'text-warning');
+                    } else {
+                        s.classList.remove('fas', 'text-warning');
+                        s.classList.add('far');
+                    }
+                });
+            });
+        });
+    }
+    
+    // Submit review
+    const submitReviewBtn = document.getElementById('submitReviewBtn');
+    if (submitReviewBtn) {
+        submitReviewBtn.addEventListener('click', function() {
+            submitReview(currentBookingId);
+        });
+    }
+    
+    // Rebook button
+    const rebookButtons = document.querySelectorAll('.rebook');
+    rebookButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const serviceId = this.dataset.serviceId;
+            window.location.href = `{% url 'book_service' %}?service=${serviceId}`;
+        });
+    });
+    
+    // Print booking
+    const printBtn = document.getElementById('printBooking');
+    if (printBtn) {
+        printBtn.addEventListener('click', function() {
+            window.print();
+        });
+    }
+    
+    // Functions
+    function showBookingDetails(bookingId) {
+        // In a real app, you would fetch this data via AJAX
+        // For now, we'll show a simple message
+        const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+        document.getElementById('bookingDetailsContent').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Booking Information</h6>
+                    <p><strong>Booking ID:</strong> #${bookingId}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></p>
+                    <p><strong>Service:</strong> Premium Wash</p>
+                    <p><strong>Date:</strong> January 10, 2025</p>
+                    <p><strong>Time:</strong> 2:00 PM</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Vehicle Information</h6>
+                    <p><strong>Type:</strong> SUV</p>
+                    <p><strong>Plate:</strong> ABC-123</p>
+                    <p><strong>Color:</strong> Black</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <h6>Service Provider</h6>
+                    <p><strong>Company:</strong> Clean Cars Inc.</p>
+                    <p><strong>Contact:</strong> (555) 123-4567</p>
+                </div>
+            </div>
+        `;
+        modal.show();
+    }
+    
+    function cancelBooking(bookingId) {
+        // In a real app, you would make an AJAX call here
+        fetch(`/api/bookings/${bookingId}/cancel/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to cancel booking: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while cancelling the booking.');
+        });
+    }
+    
+    function submitReview(bookingId) {
+        const rating = document.getElementById('selectedRating').value;
+        const comment = document.getElementById('reviewComment').value;
+        
+        // In a real app, you would make an AJAX call here
+        fetch(`/api/bookings/${bookingId}/review/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                rating: rating,
+                comment: comment
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to submit review: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the review.');
+        });
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}
